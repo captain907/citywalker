@@ -13,6 +13,7 @@ import {
   AtlasWoodButton,
   atlasColors,
 } from '@/components/AtlasUI';
+import { atlasAssets } from '@/assets/atlasAssets';
 import { useAppContext } from '@/contexts/AppContext';
 import { useSafeRouter } from '@/hooks/useSafeRouter';
 
@@ -71,7 +72,7 @@ export default function QuestCompleteScreen() {
                   <Text style={{ color: atlasColors.subInk, fontSize: 14 }}>请为这次委托盖上满意度印记</Text>
                 </View>
 
-                <AtlasMapIllustration variant="complete" height={248} />
+                <AtlasMapIllustration source={atlasAssets.questCompletePhoto01} height={248} />
 
                 <AtlasPanel>
                   <Text style={{ color: atlasColors.ink, fontSize: 24, fontFamily: 'serif', fontWeight: '700', textAlign: 'center' }}>
@@ -127,7 +128,7 @@ export default function QuestCompleteScreen() {
                   <Text style={{ color: atlasColors.subInk, fontSize: 14 }}>收藏奖励与旅途成长</Text>
                 </View>
 
-                <AtlasMapIllustration variant="complete" height={260} />
+                <AtlasMapIllustration source={atlasAssets.questCompletePhoto01} height={260} />
 
                 <AtlasPanel>
                   <Text style={{ color: atlasColors.ink, fontSize: 28, fontFamily: 'serif', fontWeight: '700', textAlign: 'center' }}>
@@ -159,11 +160,43 @@ export default function QuestCompleteScreen() {
                   <Text style={{ color: atlasColors.ink, fontSize: 24, fontFamily: 'serif', fontWeight: '700', textAlign: 'center' }}>
                     新获得的收藏
                   </Text>
-                  <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12, marginTop: 16 }}>
-                    <AtlasCollectionCard title="地点发现" progress="太平老街" status="新收录" variant="landmark" style={{ width: '47%' }} />
-                    <AtlasCollectionCard title="美食图鉴" progress="口味虾" status="已盖章" variant="food" style={{ width: '47%' }} />
-                    <AtlasCollectionCard title="氛围收藏" progress="青石巷灯" status="已入库" variant="vibe" style={{ width: '47%' }} />
-                    <AtlasCollectionCard title="城市记忆" progress="桥边夜风" status="已写入" variant="memory" style={{ width: '47%' }} />
+                  <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', rowGap: 12, marginTop: 16 }}>
+                    <AtlasCollectionCard
+                      title="地点发现"
+                      progress="太平老街"
+                      status="新收录"
+                      variant="landmark"
+                      imageSource={atlasAssets.landmarkDiscovery}
+                      style={{ width: '49.2%' }}
+                      onPress={() => router.push('/archive')}
+                    />
+                    <AtlasCollectionCard
+                      title="美食图鉴"
+                      progress="口味虾"
+                      status="已盖章"
+                      variant="food"
+                      imageSource={atlasAssets.foodArchive}
+                      style={{ width: '49.2%' }}
+                      onPress={() => router.push('/archive')}
+                    />
+                    <AtlasCollectionCard
+                      title="氛围收藏"
+                      progress="青石巷灯"
+                      status="已入库"
+                      variant="vibe"
+                      imageSource={atlasAssets.vibeCollection}
+                      style={{ width: '49.2%' }}
+                      onPress={() => router.push('/archive')}
+                    />
+                    <AtlasCollectionCard
+                      title="城市记忆"
+                      progress="桥边夜风"
+                      status="已写入"
+                      variant="memory"
+                      imageSource={atlasAssets.cityMemory}
+                      style={{ width: '49.2%' }}
+                      onPress={() => router.push('/archive')}
+                    />
                   </View>
                 </AtlasPanel>
 
@@ -182,7 +215,7 @@ export default function QuestCompleteScreen() {
             <AtlasWoodButton label="确认完成" icon="stamp" onPress={submit} />
           ) : (
             <View style={{ gap: 12 }}>
-              <AtlasWoodButton label="继续探索" icon="compass" onPress={() => router.push('/')} />
+              <AtlasWoodButton label="继续探索" icon="compass" onPress={() => router.push('/quests')} />
               <Pressable onPress={() => router.push('/profile')}>
                 <AtlasPanel style={{ alignItems: 'center', paddingVertical: 14 }}>
                   <Text style={{ color: atlasColors.bronzeDeep, fontSize: 17, fontFamily: 'serif', fontWeight: '700' }}>

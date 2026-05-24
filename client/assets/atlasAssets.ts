@@ -2,7 +2,8 @@ export const atlasAssets = {
   paperBackground: require('./atlas/paper-background.png'),
   homeMap: require('./atlas/home-relief-map.png'),
   questMap: require('./atlas/quest-relief-map.png'),
-  routeMap: require('./atlas/route-relief-map.png'),
+  routeMap: require('./atlas/guangzhou-map-relief.png'),
+  dialogFrame: require('./atlas/dialog-frame.png'),
   archiveBook: require('./atlas/badge-archive-book.png'),
   homeAtlas: require('./atlas/badge-home-atlas.png'),
   routeSeal: require('./atlas/badge-route-scroll.png'),
@@ -24,6 +25,7 @@ export const atlasAssets = {
   foodArchive: require('./atlas/collection-food-archive.png'),
   landmarkDiscovery: require('./atlas/collection-landmark-discovery.png'),
   vibeCollection: require('./atlas/collection-vibe-collection.png'),
+  questCompletePhoto01: require('./atlas/quest-complete-photo-01.png'),
   profileAvatar: require('./atlas/profile-avatar.png'),
   profileCityMap: require('./atlas/profile-city-map.png'),
 };

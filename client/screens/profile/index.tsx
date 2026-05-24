@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Image } from 'expo-image';
 import { Screen } from '@/components/Screen';
 import { atlasAssets } from '@/assets/atlasAssets';
@@ -14,9 +14,15 @@ import {
   atlasColors,
 } from '@/components/AtlasUI';
 import { useAppContext } from '@/contexts/AppContext';
+import { useSafeRouter } from '@/hooks/useSafeRouter';
 
 export default function ProfileScreen() {
+  const router = useSafeRouter();
   const { worldAttributes, routeHistory } = useAppContext();
+
+  const openCollection = (kind: 'city-memory' | 'food-archive' | 'landmark-discovery' | 'vibe-collection') => {
+    router.push('/archive-collection', { kind });
+  };
 
   return (
     <Screen className="flex-1" style={{ backgroundColor: 'transparent' }}>
@@ -81,14 +87,24 @@ export default function ProfileScreen() {
                 四组收藏卡会随着路线完成，不断长出新的页面。
               </Text>
 
-              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12, marginTop: 16 }}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  flexWrap: 'wrap',
+                  justifyContent: 'space-between',
+                  columnGap: 3,
+                  rowGap: 12,
+                  marginTop: 16,
+                }}
+              >
                 <AtlasCollectionCard
                   title="城市记忆"
                   progress={`${worldAttributes.city_memory.length} / 60`}
                   status="城市场景"
                   variant="memory"
                   imageSource={atlasAssets.cityMemory}
-                  style={{ width: '47%' }}
+                  style={{ width: '49.2%' }}
+                  onPress={() => openCollection('city-memory')}
                 />
                 <AtlasCollectionCard
                   title="美食图鉴"
@@ -96,7 +112,8 @@ export default function ProfileScreen() {
                   status="风味藏页"
                   variant="food"
                   imageSource={atlasAssets.foodArchive}
-                  style={{ width: '47%' }}
+                  style={{ width: '49.2%' }}
+                  onPress={() => openCollection('food-archive')}
                 />
                 <AtlasCollectionCard
                   title="地点发现"
@@ -104,7 +121,8 @@ export default function ProfileScreen() {
                   status="打卡地标"
                   variant="landmark"
                   imageSource={atlasAssets.landmarkDiscovery}
-                  style={{ width: '47%' }}
+                  style={{ width: '49.2%' }}
+                  onPress={() => openCollection('landmark-discovery')}
                 />
                 <AtlasCollectionCard
                   title="氛围收藏"
@@ -112,7 +130,8 @@ export default function ProfileScreen() {
                   status="夜色与街巷"
                   variant="vibe"
                   imageSource={atlasAssets.vibeCollection}
-                  style={{ width: '47%' }}
+                  style={{ width: '49.2%' }}
+                  onPress={() => openCollection('vibe-collection')}
                 />
               </View>
             </AtlasPanel>
@@ -124,7 +143,14 @@ export default function ProfileScreen() {
               <Text style={{ color: atlasColors.subInk, fontSize: 13, marginTop: 4 }}>
                 已解锁 6 / 12 区域，下一段旅程将向河岸以东展开。
               </Text>
-              <AtlasMapIllustration source={atlasAssets.profileCityMap} height={190} style={{ marginTop: 14 }} />
+              <Pressable onPress={() => router.push('/map')}>
+                <AtlasMapIllustration
+                  source={atlasAssets.profileCityMap}
+                  framed={false}
+                  aspectRatio={4 / 3}
+                  style={{ marginTop: 14 }}
+                />
+              </Pressable>
             </AtlasPanel>
 
             <AtlasPanel>

@@ -26,6 +26,8 @@ export default function RootLayout() {
         <Stack.Screen name="quest-generate" />
         <Stack.Screen name="route-detail" />
         <Stack.Screen name="quest-complete" />
+        <Stack.Screen name="archive-collection" />
+        <Stack.Screen name="archive-card-detail" />
       </Stack>
       <Toast />
     </Provider>

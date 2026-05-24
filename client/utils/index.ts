@@ -4,6 +4,40 @@ import utc from 'dayjs/plugin/utc';
 dayjs.extend(utc);
 
 const API_BASE = (process.env.EXPO_PUBLIC_API_BASE ?? '').replace(/\/$/, '');
+const BACKEND_BASE = (
+  process.env.EXPO_PUBLIC_BACKEND_BASE_URL ??
+  process.env.EXPO_PUBLIC_API_BASE ??
+  ''
+).replace(/\/$/, '');
+
+export const getApiBaseUrl = () => {
+  if (BACKEND_BASE) {
+    return BACKEND_BASE;
+  }
+
+  if (Platform.OS === 'web' && typeof window !== 'undefined') {
+    const { hostname, origin } = window.location;
+
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+      return 'http://127.0.0.1:9091';
+    }
+
+    return origin;
+  }
+
+  return '';
+};
+
+export const buildApiUrl = (path: string) => {
+  const base = getApiBaseUrl();
+  const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+
+  if (!base) {
+    return normalizedPath;
+  }
+
+  return `${base}${normalizedPath}`;
+};
 
 /**
  * 创建跨平台兼容的文件对象，用于 FormData.append()

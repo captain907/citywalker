@@ -1,9 +1,33 @@
+import type { ImageSourcePropType } from 'react-native';
+
 export interface CoreAttributes {
   vitality: number;
   exploration: number;
   joy: number;
   taste: number;
 }
+
+export type CollectionKind =
+  | 'city-memory'
+  | 'food-archive'
+  | 'landmark-discovery'
+  | 'vibe-collection';
+
+export interface ArchivePhotoEntry {
+  id: string;
+  title: string;
+  subtitle: string;
+  note: string;
+  image: ImageSourcePropType;
+  uploaded?: boolean;
+  journalEntryId?: string;
+  generatedImageUrl?: string;
+  originalImageUrl?: string;
+  downloadUrl?: string;
+  tags?: string[];
+}
+
+export type ArchiveCollectionMap = Record<CollectionKind, ArchivePhotoEntry[]>;
 
 export interface WorldAttributes {
   city_memory: string[];
@@ -78,6 +102,9 @@ export interface AppContextType {
   questPreferences: QuestPreferences;
   questTemplates: QuestCardData[];
   selectedQuest: string | null;
+  uploadedArchiveItems: ArchiveCollectionMap;
+  journalArchiveItems: ArchiveCollectionMap;
+  archiveNotes: Record<string, string>;
   setCoreAttributes: (attrs: CoreAttributes) => void;
   setWorldAttributes: (attrs: WorldAttributes) => void;
   setCurrentQuest: (quest: CurrentQuest | null) => void;
@@ -86,4 +113,8 @@ export interface AppContextType {
   selectQuest: (questType: string) => void;
   mockCurrentQuest: () => void;
   completeQuest: (satisfaction: number) => void;
+  addArchiveItem: (kind: CollectionKind, item: ArchivePhotoEntry) => void;
+  addArchiveJournalItem: (kind: CollectionKind, item: ArchivePhotoEntry) => void;
+  clearArchiveJournalItems: (kind: CollectionKind) => void;
+  setArchiveNote: (kind: CollectionKind, itemId: string, note: string) => void;
 }

@@ -1,7 +1,7 @@
 import React from 'react';
 import { ScrollView, Text, View } from 'react-native';
 import { Screen } from '@/components/Screen';
-import { AtlasBackground, AtlasDivider, AtlasMedallion, AtlasMapIllustration, atlasColors } from '@/components/AtlasUI';
+import { AtlasBackground, AtlasDivider, AtlasMedallion, atlasColors } from '@/components/AtlasUI';
 import QuestTicketCard from '@/components/QuestTicketCard';
 import { useAppContext } from '@/contexts/AppContext';
 import { useSafeRouter } from '@/hooks/useSafeRouter';
@@ -24,7 +24,6 @@ export default function QuestsScreen() {
             </View>
 
             <AtlasDivider title="QUEST BOARD" />
-            <AtlasMapIllustration variant="quest" height={160} />
 
             <View>
               {questTemplates.map((quest) => (

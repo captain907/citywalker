@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  ImageStyle,
   Platform,
   Pressable,
   StyleProp,
@@ -75,63 +76,8 @@ export function AtlasBackground({
 }) {
   return (
     <View style={[styles.background, style]}>
-      <Image
-        source={atlasAssets.paperBackground}
-        contentFit="cover"
-        style={StyleSheet.absoluteFill}
-      />
-      <Svg style={StyleSheet.absoluteFill} viewBox="0 0 400 900" preserveAspectRatio="none">
-        <Rect x="0" y="0" width="400" height="900" fill={atlasColors.paper} />
-        <Path
-          d="M8 72c34-18 70-23 119-18 40 3 69 17 112 11 38-6 71-26 152-12"
-          stroke="#D5C3A4"
-          strokeWidth="1.2"
-          fill="none"
-          opacity="0.35"
-        />
-        <Path
-          d="M-6 118c24 17 66 29 112 18 44-10 79-35 134-24 36 7 80 34 166 18"
-          stroke="#D8C9B2"
-          strokeWidth="1"
-          fill="none"
-          opacity="0.28"
-        />
-        <Path
-          d="M14 756c45-29 93-34 144-18 57 18 103 31 154 14 34-11 48-28 84-24"
-          stroke="#D5C3A4"
-          strokeWidth="1.3"
-          fill="none"
-          opacity="0.28"
-        />
-        <Path
-          d="M32 652c18-11 36-20 58-22 19-2 39 1 63-5 26-6 42-23 66-29 23-5 42 3 59 8"
-          stroke="#D5C8B0"
-          strokeWidth="1"
-          fill="none"
-          opacity="0.24"
-        />
-        <Path
-          d="M34 182c0 0 19-15 45-14 25 1 50 22 80 18 35-4 58-28 98-24 31 3 57 20 85 17"
-          stroke="#CDB899"
-          strokeWidth="0.9"
-          fill="none"
-          opacity="0.16"
-        />
-        <Path
-          d="M268 178c17 10 29 21 44 38 8 9 18 14 35 20"
-          stroke="#D5C3A4"
-          strokeWidth="1"
-          fill="none"
-          opacity="0.18"
-        />
-        <Circle cx="52" cy="142" r="2.6" fill="#D5C3A4" opacity="0.45" />
-        <Circle cx="338" cy="118" r="2.2" fill="#D5C3A4" opacity="0.38" />
-        <Circle cx="302" cy="768" r="2.8" fill="#D5C3A4" opacity="0.35" />
-        <Circle cx="86" cy="826" r="2.1" fill="#D5C3A4" opacity="0.3" />
-        <Rect x="20" y="20" width="360" height="860" rx="28" fill="none" stroke="#E2D3B8" opacity="0.25" />
-      </Svg>
+      <Image source={atlasAssets.paperBackground} contentFit="cover" style={StyleSheet.absoluteFill} />
       <View style={styles.backgroundTint} />
-      <View style={styles.paperNoise} />
       {children}
     </View>
   );
@@ -141,14 +87,16 @@ export function AtlasPanel({
   children,
   style,
   variant = 'raised',
+  hideHighlight = false,
 }: {
   children: React.ReactNode;
   style?: StyleProp<ViewStyle>;
   variant?: PanelVariant;
+  hideHighlight?: boolean;
 }) {
   return (
     <View style={[styles.panelBase, panelVariantStyles[variant], style]}>
-      <View pointerEvents="none" style={styles.panelHighlight} />
+      {hideHighlight ? null : <View pointerEvents="none" style={styles.panelHighlight} />}
       <View pointerEvents="none" style={styles.panelInnerFrame} />
       {variant === 'ticket' ? (
         <>
@@ -591,16 +539,18 @@ export function AtlasCollectionCard({
   variant,
   style,
   imageSource,
+  onPress,
 }: {
-  title: string;
+  title?: string;
   progress: string;
   status: string;
   variant: MiniatureVariant;
   style?: StyleProp<ViewStyle>;
   imageSource?: AtlasImageSource;
+  onPress?: () => void;
 }) {
-  return (
-    <View style={[styles.collectionCard, style]}>
+  const content = (
+    <>
       <View style={styles.collectionArtWrap}>
         {imageSource ? (
           <Image source={imageSource} contentFit="contain" style={StyleSheet.absoluteFill} />
@@ -612,8 +562,20 @@ export function AtlasCollectionCard({
         <Text style={styles.collectionProgress}>{progress}</Text>
         <Text style={styles.collectionStatus}>{status}</Text>
       </View>
-    </View>
+    </>
   );
+
+  if (onPress) {
+    return (
+      <View style={style}>
+        <Pressable onPress={onPress} style={({ pressed }) => [{ opacity: pressed ? 0.9 : 1 }]}>
+          <View style={styles.collectionCard}>{content}</View>
+        </Pressable>
+      </View>
+    );
+  }
+
+  return <View style={[styles.collectionCard, style]}>{content}</View>;
 }
 
 function ReliefBuilding({ x, y, scale = 1 }: { x: number; y: number; scale?: number }) {
@@ -697,14 +659,9 @@ const styles = StyleSheet.create({
     position: 'relative',
     overflow: 'hidden',
   },
-  paperNoise: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(255,255,255,0.02)',
-    opacity: 0.7,
-  },
   backgroundTint: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(232, 222, 210, 0.22)',
+    backgroundColor: 'rgba(232, 222, 210, 0.08)',
   },
   panelBase: {
     position: 'relative',
@@ -771,12 +728,12 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     ...outerShadow,
   },
-  assetBadgeImage: Platform.select({
+  assetBadgeImage: Platform.select<ImageStyle>({
     web: {
       mixBlendMode: 'multiply',
       opacity: 0.98,
       filter: 'contrast(1.02) saturate(0.94)',
-    } as ViewStyle,
+    } as ImageStyle,
     default: {
       opacity: 0.98,
     },
@@ -947,28 +904,32 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255,255,255,0.45)',
   },
   collectionCard: {
-    gap: 10,
+    gap: 6,
   },
   collectionArtWrap: {
-    height: 188,
+    width: '100%',
+    aspectRatio: 1,
     borderRadius: 18,
     overflow: 'hidden',
-    backgroundColor: atlasColors.paper,
+    backgroundColor: 'transparent',
   },
   collectionFooter: {
-    paddingHorizontal: 4,
+    width: '100%',
+    paddingHorizontal: 2,
     alignItems: 'center',
-    gap: 4,
+    gap: 2,
   },
   collectionProgress: {
     color: atlasColors.ink,
-    fontSize: 18,
+    fontSize: 19,
     fontFamily: 'serif',
+    lineHeight: 24,
     textAlign: 'center',
   },
   collectionStatus: {
     color: atlasColors.subInk,
-    fontSize: 12,
+    fontSize: 13,
+    lineHeight: 18,
     textAlign: 'center',
   },
 });

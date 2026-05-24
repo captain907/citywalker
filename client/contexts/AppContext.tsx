@@ -1,6 +1,9 @@
 import React, { createContext, ReactNode, useContext, useState } from 'react';
 import {
   AppContextType,
+  ArchiveCollectionMap,
+  ArchivePhotoEntry,
+  CollectionKind,
   CoreAttributes,
   CurrentQuest,
   QuestPreferences,
@@ -19,6 +22,15 @@ import {
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
+function createEmptyArchiveCollectionMap(): ArchiveCollectionMap {
+  return {
+    'city-memory': [],
+    'food-archive': [],
+    'landmark-discovery': [],
+    'vibe-collection': [],
+  };
+}
+
 export function AppProvider({ children }: { children: ReactNode }) {
   const [coreAttributes, setCoreAttributes] = useState<CoreAttributes>(MOCK_CORE_ATTRIBUTES);
   const [worldAttributes, setWorldAttributes] = useState<WorldAttributes>(MOCK_WORLD_ATTRIBUTES);
@@ -26,6 +38,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [routeHistory, setRouteHistory] = useState<RouteHistoryItem[]>(MOCK_ROUTE_HISTORY);
   const [questPreferences, setQuestPreferences] = useState<QuestPreferences>(MOCK_QUEST_PREFERENCES);
   const [selectedQuest, setSelectedQuest] = useState<string | null>(null);
+  const [uploadedArchiveItems, setUploadedArchiveItems] = useState<ArchiveCollectionMap>(
+    createEmptyArchiveCollectionMap
+  );
+  const [journalArchiveItems, setJournalArchiveItems] = useState<ArchiveCollectionMap>(
+    createEmptyArchiveCollectionMap
+  );
+  const [archiveNotes, setArchiveNotes] = useState<Record<string, string>>({});
   const questTemplates = MOCK_QUEST_CARDS;
 
   const getLevelForXP = (xp: number) => {
@@ -93,6 +112,47 @@ export function AppProvider({ children }: { children: ReactNode }) {
     ]);
   };
 
+  const upsertArchiveEntry = (
+    items: ArchivePhotoEntry[],
+    nextItem: ArchivePhotoEntry
+  ): ArchivePhotoEntry[] => {
+    const existingIndex = items.findIndex((entry) => entry.id === nextItem.id);
+
+    if (existingIndex === -1) {
+      return [nextItem, ...items];
+    }
+
+    return items.map((entry, index) => (index === existingIndex ? nextItem : entry));
+  };
+
+  const addArchiveItem = (kind: CollectionKind, item: ArchivePhotoEntry) => {
+    setUploadedArchiveItems((prev) => ({
+      ...prev,
+      [kind]: upsertArchiveEntry(prev[kind], item),
+    }));
+  };
+
+  const addArchiveJournalItem = (kind: CollectionKind, item: ArchivePhotoEntry) => {
+    setJournalArchiveItems((prev) => ({
+      ...prev,
+      [kind]: upsertArchiveEntry(prev[kind], item),
+    }));
+  };
+
+  const clearArchiveJournalItems = (kind: CollectionKind) => {
+    setJournalArchiveItems((prev) => ({
+      ...prev,
+      [kind]: [],
+    }));
+  };
+
+  const setArchiveNote = (kind: CollectionKind, itemId: string, note: string) => {
+    setArchiveNotes((prev) => ({
+      ...prev,
+      [`${kind}:${itemId}`]: note,
+    }));
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -103,6 +163,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
         questPreferences,
         questTemplates,
         selectedQuest,
+        uploadedArchiveItems,
+        journalArchiveItems,
+        archiveNotes,
         setCoreAttributes,
         setWorldAttributes,
         setCurrentQuest,
@@ -111,6 +174,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
         selectQuest,
         mockCurrentQuest,
         completeQuest,
+        addArchiveItem,
+        addArchiveJournalItem,
+        clearArchiveJournalItems,
+        setArchiveNote,
       }}
     >
       {children}
