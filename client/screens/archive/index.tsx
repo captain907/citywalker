@@ -12,6 +12,7 @@ import {
   atlasColors,
 } from '@/components/AtlasUI';
 import { useAppContext } from '@/contexts/AppContext';
+import { collectionConfig } from '@/data/archiveCollections';
 import { useSafeRouter } from '@/hooks/useSafeRouter';
 
 const copy = {
@@ -34,6 +35,8 @@ const copy = {
 export default function ArchiveScreen() {
   const router = useSafeRouter();
   const { worldAttributes } = useAppContext();
+  const cityLibraryCount = collectionConfig['city-memory'].items.length;
+  const foodLibraryCount = collectionConfig['food-archive'].items.length;
 
   const openCollection = (kind: 'city-memory' | 'food-archive' | 'landmark-discovery' | 'vibe-collection') => {
     router.push('/archive-collection', { kind });
@@ -65,10 +68,10 @@ export default function ArchiveScreen() {
                 labelStyle={styles.summaryDividerLabel}
               />
               <View style={styles.summaryGrid}>
-                <SummaryCell label={copy.food} value={String(worldAttributes.cuisine_archive.length)} />
+                <SummaryCell label={copy.food} value={String(foodLibraryCount)} />
                 <SummaryCell label={copy.landmark} value={String(worldAttributes.landmark_discovery.length)} />
                 <SummaryCell label={copy.vibe} value={String(worldAttributes.vibe_collection.length)} />
-                <SummaryCell label={copy.memory} value={String(worldAttributes.city_memory.length)} />
+                <SummaryCell label={copy.memory} value={String(cityLibraryCount)} />
               </View>
             </AtlasPanel>
 
@@ -83,7 +86,7 @@ export default function ArchiveScreen() {
             >
               <AtlasCollectionCard
                 title={copy.memory}
-                progress={`${worldAttributes.city_memory.length} / 60`}
+                progress={`${cityLibraryCount} / 60`}
                 status={copy.memoryStatus}
                 variant="memory"
                 imageSource={atlasAssets.cityMemory}
@@ -92,7 +95,7 @@ export default function ArchiveScreen() {
               />
               <AtlasCollectionCard
                 title={copy.food}
-                progress={`${worldAttributes.cuisine_archive.length} / 120`}
+                progress={`${foodLibraryCount} / 120`}
                 status={copy.foodStatus}
                 variant="food"
                 imageSource={atlasAssets.foodArchive}

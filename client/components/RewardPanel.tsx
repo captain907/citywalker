@@ -183,7 +183,7 @@ export default function RewardPanel({
               className="text-xs"
               style={{ color: '#B85A3C' }}
             >
-              美食图鉴：小龙虾
+              美食图鉴：艇仔粥
             </Text>
           </View>
           <View 
@@ -194,7 +194,7 @@ export default function RewardPanel({
               className="text-xs"
               style={{ color: '#8FAEB0' }}
             >
-              地点发现：江边散步点
+              地点发现：海心桥机位
             </Text>
           </View>
           <View 
@@ -205,7 +205,7 @@ export default function RewardPanel({
               className="text-xs"
               style={{ color: '#B98A45' }}
             >
-              氛围收藏：夜晚江风
+              氛围收藏：珠江晚风
             </Text>
           </View>
         </View>

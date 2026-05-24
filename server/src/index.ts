@@ -34,6 +34,8 @@ const rpgAgentAuthToken =
   process.env.COZE_API_TOKEN ||
   "";
 const rpgAgentUserId = process.env.RPG_AGENT_USER_ID || "demo-user";
+const rpgAgentProjectId = (process.env.RPG_AGENT_PROJECT_ID || "").trim();
+const rpgAgentStreamRunPath = (process.env.RPG_AGENT_STREAM_RUN_PATH || "/stream_run").trim();
 const rpgAgentTimeoutMs = Number(process.env.RPG_AGENT_TIMEOUT_MS || 15000);
 const rpgAgentDefaultLatitude = Number(process.env.RPG_AGENT_DEFAULT_LATITUDE || 23.1291);
 const rpgAgentDefaultLongitude = Number(process.env.RPG_AGENT_DEFAULT_LONGITUDE || 113.2644);
@@ -236,6 +238,58 @@ function deriveJournalNote(payload: JournalCardPayload, fallbackNote?: string) {
   return payload.note || payload.story || payload.food_description || fallbackNote || "这页手账卡已经整理完成。";
 }
 
+function parseLegacyStreamRunReply(streamText: string) {
+  const lines = streamText.split(/\r?\n/);
+  const answerChunks: string[] = [];
+  let streamError: string | null = null;
+
+  for (const line of lines) {
+    if (!line.startsWith("data:")) {
+      continue;
+    }
+
+    const payloadText = line.slice(5).trim();
+    if (!payloadText) {
+      continue;
+    }
+
+    try {
+      const payload = JSON.parse(payloadText) as {
+        type?: string;
+        content?: {
+          answer?: string | null;
+          error?: string | { message?: string } | null;
+        } | null;
+      };
+
+      if (payload.type === "answer" && payload.content?.answer) {
+        answerChunks.push(payload.content.answer);
+      }
+
+      const errorContent = payload.content?.error;
+      if (typeof errorContent === "string" && errorContent.trim()) {
+        streamError = errorContent.trim();
+      } else if (errorContent && typeof errorContent === "object" && errorContent.message?.trim()) {
+        streamError = errorContent.message.trim();
+      }
+    } catch {
+      continue;
+    }
+  }
+
+  const reply = answerChunks.join("").trim();
+
+  if (!reply && streamError) {
+    throw new Error(streamError);
+  }
+
+  if (!reply) {
+    throw new Error("Legacy Coze stream_run did not return a reply");
+  }
+
+  return reply;
+}
+
 async function readJsonLikeResponse(response: globalThis.Response) {
   const text = await response.text();
 
@@ -336,7 +390,7 @@ function mapCommissionToCurrentQuest(
   };
 }
 
-async function callRpgAgentInterpret(prompt: string) {
+async function callRpgAgentInterpret(prompt: string, sessionId: string) {
   if (!rpgAgentApiBase) {
     throw new Error("RPG_AGENT_API_BASE_URL is not configured on the server");
   }
@@ -345,6 +399,48 @@ async function callRpgAgentInterpret(prompt: string) {
   const timeout = setTimeout(() => controller.abort(), rpgAgentTimeoutMs);
 
   try {
+    if (rpgAgentProjectId) {
+      const response = await fetch(`${rpgAgentApiBase}${rpgAgentStreamRunPath}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "text/event-stream",
+          ...(rpgAgentAuthToken ? { Authorization: `Bearer ${rpgAgentAuthToken}` } : {}),
+        },
+        body: JSON.stringify({
+          content: {
+            query: {
+              prompt: [
+                {
+                  type: "text",
+                  content: {
+                    text: prompt,
+                  },
+                },
+              ],
+            },
+          },
+          type: "query",
+          session_id: sessionId,
+          project_id: rpgAgentProjectId,
+        }),
+        signal: controller.signal,
+      });
+
+      const streamText = await response.text();
+
+      if (!response.ok) {
+        throw new Error(streamText || `Legacy Coze stream_run failed with status ${response.status}`);
+      }
+
+      return {
+        reply: parseLegacyStreamRunReply(streamText),
+        shouldGenerateCommission: false,
+        scenario: undefined,
+        askAccept: false,
+      };
+    }
+
     const response = await fetch(`${rpgAgentApiBase}/api/action/commission/interpret`, {
       method: "POST",
       headers: {
@@ -432,7 +528,7 @@ app.post("/api/v1/chat", async (req, res, next) => {
   try {
     const payload = chatRequestSchema.parse(req.body);
     const sessionId = payload.sessionId || `web-${Date.now()}`;
-    const result = await callRpgAgentInterpret(payload.prompt);
+    const result = await callRpgAgentInterpret(payload.prompt, sessionId);
 
     res.status(200).json({
       reply: result.reply,

@@ -88,14 +88,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
         ...prev,
         xp: nextXP,
         journey_level: nextLevel,
-        city_memory: prev.city_memory.includes('珠江桥边') ? prev.city_memory : [...prev.city_memory, '珠江桥边'],
-        cuisine_archive: prev.cuisine_archive.includes('口味虾') ? prev.cuisine_archive : [...prev.cuisine_archive, '口味虾'],
-        landmark_discovery: prev.landmark_discovery.includes('江边散步点')
+        city_memory: prev.city_memory.includes('广州塔夜景') ? prev.city_memory : [...prev.city_memory, '广州塔夜景'],
+        cuisine_archive: prev.cuisine_archive.includes('艇仔粥') ? prev.cuisine_archive : [...prev.cuisine_archive, '艇仔粥'],
+        landmark_discovery: prev.landmark_discovery.includes('海心桥机位')
           ? prev.landmark_discovery
-          : [...prev.landmark_discovery, '江边散步点'],
-        vibe_collection: prev.vibe_collection.includes('夜晚江风')
+          : [...prev.landmark_discovery, '海心桥机位'],
+        vibe_collection: prev.vibe_collection.includes('珠江晚风')
           ? prev.vibe_collection
-          : [...prev.vibe_collection, '夜晚江风'],
+          : [...prev.vibe_collection, '珠江晚风'],
       };
     });
 
@@ -103,8 +103,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
       {
         date: new Date().toISOString().slice(0, 10),
         route_title: currentQuest.route_title,
-        cuisine: ['口味虾'],
-        landmarks: ['珠江桥边'],
+          cuisine: ['艇仔粥'],
+          landmarks: ['广州塔夜景'],
         vibes: currentQuest.vibe_tags,
         xp: totalXP,
       },

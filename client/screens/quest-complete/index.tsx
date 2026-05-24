@@ -163,7 +163,7 @@ export default function QuestCompleteScreen() {
                   <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', rowGap: 12, marginTop: 16 }}>
                     <AtlasCollectionCard
                       title="地点发现"
-                      progress="太平老街"
+                      progress="广州塔"
                       status="新收录"
                       variant="landmark"
                       imageSource={atlasAssets.landmarkDiscovery}
@@ -172,7 +172,7 @@ export default function QuestCompleteScreen() {
                     />
                     <AtlasCollectionCard
                       title="美食图鉴"
-                      progress="口味虾"
+                      progress="艇仔粥"
                       status="已盖章"
                       variant="food"
                       imageSource={atlasAssets.foodArchive}
@@ -181,7 +181,7 @@ export default function QuestCompleteScreen() {
                     />
                     <AtlasCollectionCard
                       title="氛围收藏"
-                      progress="青石巷灯"
+                      progress="塔下夜灯"
                       status="已入库"
                       variant="vibe"
                       imageSource={atlasAssets.vibeCollection}

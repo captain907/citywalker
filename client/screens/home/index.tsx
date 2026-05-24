@@ -364,10 +364,8 @@ export default function HomeScreen() {
           subtitle: `${prettifyScenario(result.scenario)} 已就绪，要现在展开吗？`,
         });
         setDialogHint('旅伴已经替你翻到一张新委托。');
-      }
-      setDialogHint('已通过本地代理连上 Coze');
-      if (result.shouldGenerateCommission && result.askAccept && result.scenario) {
-        setDialogHint('旅伴已经替你翻到一张新委托。');
+      } else {
+        setDialogHint('已通过本地代理连上 Coze');
       }
     } catch (error) {
       const message = error instanceof Error ? error.message : '连接智能体时发生未知错误';
@@ -414,7 +412,7 @@ export default function HomeScreen() {
                 <AtlasAssetBadge source={atlasAssets.compassRose} size={50} />
               </Pressable>
               <View style={styles.headerCenter}>
-                <Text style={styles.coverTitle}>饮旅冒险家</Text>
+                <Text style={styles.coverTitle}>饭旅冒险家</Text>
                 <Text style={styles.coverSubBrand}>CityQuest</Text>
                 <AtlasDivider title="ATLAS COVER" style={{ width: '100%', marginTop: 10 }} />
                 <Text style={styles.coverSubtitle}>城市美食与记忆的探索之旅</Text>
@@ -513,7 +511,6 @@ export default function HomeScreen() {
                   }}
                 />
                 <AtlasWoodButton
-                  label={isSending ? '连线中' : '发送'}
                   icon="paper-plane"
                   onPress={() => {
                     void sendDialogue();
@@ -584,9 +581,9 @@ export default function HomeScreen() {
                     <AtlasAssetBadge source={atlasAssets.stoneLampBadge} size={44} />
                     <View style={{ flex: 1 }}>
                       <Text style={styles.questCaption}>探索委托单</Text>
-                      <Text style={styles.questTitle}>寻味老城烟火</Text>
+                      <Text style={styles.questTitle}>珠江夜风寻味</Text>
                       <Text style={styles.questCopy}>
-                        今晚的任务是跟着桥与巷前进，收集一页晚风、灯火和一口热气腾腾的城市记忆。
+                        今晚的任务会从广州塔附近起笔，沿着江岸、桥影和街区灯火，收集一页属于广州的晚风与风味记忆。
                       </Text>
                     </View>
                   </View>
@@ -594,7 +591,8 @@ export default function HomeScreen() {
                 </View>
 
                 <View style={styles.questTags}>
-                  <AtlasPill label="太平码头" />
+                  <AtlasPill label="广州塔" />
+                  <AtlasPill label="海心桥" />
                   <AtlasPill label="夜色烟火" />
                   <AtlasPill label="3 处打卡" />
                 </View>
@@ -605,7 +603,7 @@ export default function HomeScreen() {
                   <View style={{ flex: 1 }}>
                     <Text style={styles.questFooterTitle}>委托说明</Text>
                     <Text style={styles.questFooterCopy}>
-                      建议按“先吃、后走、再停留”的节奏展开，适合把今天写成一张完整票据。
+                      建议按“先塔下漫步、再寻味、最后沿江停留”的节奏展开，适合把今晚写成一张完整的广州票据。
                     </Text>
                   </View>
                   <AtlasAssetBadge source={atlasAssets.discoveryBadge} size={42} />
@@ -736,8 +734,8 @@ const styles = StyleSheet.create({
   },
   promptBubble: {
     position: 'absolute',
-    left: 162,
-    bottom: 112,
+    left: '37.4%',
+    bottom: '41.2%',
     maxWidth: 152,
     paddingHorizontal: 14,
     paddingVertical: 8,
@@ -748,8 +746,8 @@ const styles = StyleSheet.create({
   },
   promptBubbleDot: {
     position: 'absolute',
-    left: 158,
-    bottom: 108,
+    left: '35.6%',
+    bottom: '38.9%',
     width: 10,
     height: 10,
     borderRadius: 999,
@@ -814,8 +812,9 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   dialogButton: {
-    width: 132,
+    width: 62,
     minHeight: 56,
+    paddingHorizontal: 0,
   },
   acceptPanel: {
     gap: 12,

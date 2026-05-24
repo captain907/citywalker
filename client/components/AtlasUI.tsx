@@ -298,7 +298,7 @@ export function AtlasWoodButton({
   icon,
   style,
 }: {
-  label: string;
+  label?: string;
   onPress?: () => void;
   icon?: AtlasIconName;
   style?: StyleProp<ViewStyle>;
@@ -310,7 +310,7 @@ export function AtlasWoodButton({
       <View pointerEvents="none" style={styles.woodCornerRight} />
       <View style={styles.woodContent}>
         {icon ? <FontAwesome6 name={icon} size={16} color="#F8ECD8" /> : null}
-        <Text style={styles.woodLabel}>{label}</Text>
+        {label ? <Text style={styles.woodLabel}>{label}</Text> : null}
       </View>
     </Pressable>
   );
